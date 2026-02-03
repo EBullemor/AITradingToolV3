@@ -1,0 +1,31 @@
+# Core
+pandas>=2.0.0
+numpy>=1.24.0
+pyyaml>=6.0
+
+# API Clients
+anthropic>=0.18.0
+requests>=2.31.0
+
+# Data Processing
+python-dateutil>=2.8.0
+
+# Logging
+loguru>=0.7.0
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# Optional: Bloomberg API (requires license)
+# blpapi>=3.19.0
+
+# Optional: Dashboard
+# streamlit>=1.28.0
+# plotly>=5.18.0
+
+# Optional: Notion
+# notion-client>=2.0.0
+
+# Development
+ruff>=0.1.0

@@ -1,0 +1,97 @@
+# Monitoring Configuration
+# Settings for health checks, metrics, and alerts
+
+health_checks:
+  # Pipeline completion checks
+  pipeline:
+    max_runtime_minutes: 30
+    required_stages:
+      - data_ingestion
+      - feature_engineering
+      - signal_generation
+      - signal_aggregation
+      - output_generation
+    
+  # Data quality checks
+  data:
+    max_stale_hours: 24
+    min_instruments: 4
+    min_validation_pass_rate: 0.95
+    required_files:
+      - fx_spots
+      - macro
+    
+  # Signal quality checks
+  model:
+    signal_imbalance_threshold: 0.80  # >80% same direction = warning
+    min_signals_per_week: 3
+    max_signals_per_day: 20
+    confidence_drift_threshold: 0.20
+    
+  # LLM quality checks
+  llm:
+    min_grounding_score: 0.85
+    max_api_latency_seconds: 30
+    max_consecutive_errors: 3
+    
+  # Output checks
+  output:
+    min_recommendations_per_day: 0  # 0 = warning only, not failure
+    max_recommendations_per_day: 15
+    notion_timeout_seconds: 10
+
+# Metrics collection
+metrics:
+  enabled: true
+  storage_dir: data/metrics
+  retention_days: 30
+  
+  # What to collect
+  collect:
+    - pipeline_duration
+    - stage_timings
+    - signal_counts
+    - recommendation_counts
+    - error_counts
+    - api_latencies
+
+# Alert configuration
+alerts:
+  enabled: true
+  
+  # Slack webhook (can also be set via SLACK_MONITORING_WEBHOOK env var)
+  slack_webhook: "${SLACK_MONITORING_WEBHOOK}"
+  
+  # What levels trigger alerts
+  alert_on:
+    - warning
+    - error
+    - critical
+  
+  # Don't send alerts during these hours (local time)
+  quiet_hours:
+    start: "22:00"
+    end: "06:00"
+  
+  # Wait this long before re-alerting for same issue
+  cooldown_minutes: 60
+  
+  # Escalate if issue persists
+  escalation:
+    enabled: true
+    escalate_after_minutes: 120
+    escalate_to: "${SLACK_ESCALATION_WEBHOOK}"
+
+# Dashboard data export
+dashboard:
+  enabled: true
+  export_dir: data/dashboard
+  export_format: json
+  
+  # Metrics to export
+  metrics:
+    - daily_runs
+    - success_rate
+    - avg_duration
+    - signal_distribution
+    - recommendation_count

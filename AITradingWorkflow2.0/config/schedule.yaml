@@ -1,0 +1,133 @@
+# ===========================================
+# Schedule Configuration
+# ===========================================
+# Pipeline timing and scheduling rules
+
+# ----- Timezone -----
+timezone: "America/New_York"  # All times in ET
+
+# ----- Daily Pipeline -----
+daily_pipeline:
+  # Main morning run
+  morning_run:
+    enabled: true
+    time: "06:30"           # 6:30 AM ET
+    description: "Main daily recommendation generation"
+    
+  # End of day summary
+  eod_summary:
+    enabled: true
+    time: "18:00"           # 6:00 PM ET
+    description: "Daily P&L and position summary"
+
+# ----- Data Ingestion -----
+data_ingestion:
+  # Bloomberg data expected by this time
+  bloomberg_deadline: "06:00"
+  
+  # Retry if data not available
+  retry:
+    enabled: true
+    max_retries: 3
+    retry_interval_minutes: 15
+    
+  # Alert if still missing after retries
+  alert_on_missing: true
+
+# ----- Health Checks -----
+health_checks:
+  # Run after daily pipeline
+  post_pipeline:
+    enabled: true
+    delay_minutes: 5  # Wait 5 min after pipeline completes
+    
+  # Periodic checks during market hours
+  periodic:
+    enabled: true
+    interval_minutes: 60
+    market_hours_only: true
+
+# ----- Market Hours -----
+market_hours:
+  # FX markets
+  fx:
+    open: "17:00"   # Sunday
+    close: "17:00"  # Friday
+    continuous: true  # 24h during week
+    
+  # US equity/commodities
+  us_markets:
+    open: "09:30"
+    close: "16:00"
+    pre_market: "06:00"
+    after_hours: "20:00"
+    
+  # Crypto
+  crypto:
+    open: "00:00"
+    close: "23:59"
+    continuous: true  # 24/7
+
+# ----- Trading Calendar -----
+holidays:
+  # US market holidays (skip data ingestion)
+  us_holidays_2026:
+    - "2026-01-01"   # New Year's Day
+    - "2026-01-19"   # MLK Day
+    - "2026-02-16"   # Presidents Day
+    - "2026-04-03"   # Good Friday
+    - "2026-05-25"   # Memorial Day
+    - "2026-07-03"   # Independence Day (observed)
+    - "2026-09-07"   # Labor Day
+    - "2026-11-26"   # Thanksgiving
+    - "2026-12-25"   # Christmas
+    
+  # Handle half days
+  half_days_2026:
+    - date: "2026-11-27"
+      close: "13:00"  # Day after Thanksgiving
+    - date: "2026-12-24"
+      close: "13:00"  # Christmas Eve
+
+# ----- Notifications -----
+notifications:
+  # Morning summary
+  morning_summary:
+    enabled: true
+    time: "08:00"
+    channel: "slack"
+    content:
+      - new_recommendations
+      - open_positions
+      - key_events_today
+      
+  # Trade alerts
+  trade_alerts:
+    enabled: true
+    immediate: true  # Send immediately when generated
+    channel: "slack"
+    
+  # EOD summary
+  eod_summary:
+    enabled: true
+    time: "18:00"
+    channel: "slack"
+    content:
+      - daily_pnl
+      - open_positions
+      - closed_trades
+      - tomorrow_events
+
+# ----- Backtest Scheduling -----
+backtest:
+  # Weekly strategy validation
+  weekly_validation:
+    enabled: false  # Enable in V1
+    day: "Sunday"
+    time: "10:00"
+    
+  # Monthly full backtest
+  monthly_backtest:
+    enabled: false  # Enable in V1
+    day: 1  # First of month
+    time: "02:00"
