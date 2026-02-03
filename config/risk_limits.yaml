@@ -1,0 +1,99 @@
+# Risk Limits Configuration
+# Controls position sizing and portfolio risk management
+
+# Position Sizing
+position_sizing:
+  # Default risk per trade (1% of portfolio)
+  default_risk_pct: 0.01
+  
+  # Maximum position size (10% of portfolio)
+  max_position_pct: 0.10
+  
+  # Maximum stop loss distance (3% of entry)
+  max_stop_distance_pct: 0.03
+  
+  # Minimum position value in USD
+  min_position_value: 1000
+  
+  # Default sizing method: fixed_risk, fixed_fraction, vol_adjusted
+  default_method: fixed_risk
+  
+  # ATR multiplier for stop loss calculation
+  atr_multiplier: 2.0
+
+# Portfolio Limits
+portfolio:
+  # Maximum gross exposure (long + short)
+  max_gross_exposure: 1.0  # 100%
+  
+  # Maximum net exposure (|long - short|)
+  max_net_exposure: 0.5  # 50%
+  
+  # Volatility target for portfolio
+  volatility_target: 0.10  # 10% annualized
+  
+  # Maximum daily loss before stopping trading
+  max_daily_loss_pct: 0.03  # 3%
+  
+  # Maximum drawdown before stopping trading
+  max_drawdown_pct: 0.10  # 10%
+
+# Correlation Limits
+correlation:
+  # Correlation threshold for "correlated" positions
+  threshold: 0.70
+  
+  # Maximum positions with correlation > threshold
+  max_correlated_positions: 3
+
+# Per-Asset Class Limits
+asset_limits:
+  fx:
+    max_gross_exposure: 0.60  # 60% max in FX
+    max_per_pair: 0.15  # 15% max per FX pair
+    
+  commodities:
+    max_gross_exposure: 0.30  # 30% max in commodities
+    max_per_contract: 0.10
+    
+  crypto:
+    max_gross_exposure: 0.20  # 20% max in crypto
+    max_per_coin: 0.10
+
+# Stop Loss Rules
+stop_loss:
+  # Default stop method: atr, fixed_pct, support_level
+  default_method: atr
+  
+  # ATR-based stop
+  atr:
+    multiplier: 2.0
+    max_multiplier: 3.0
+  
+  # Fixed percentage stop
+  fixed:
+    default_pct: 0.02  # 2%
+    max_pct: 0.03  # 3%
+
+# Take Profit Rules
+take_profit:
+  # Default risk:reward targets
+  targets:
+    - ratio: 1.5
+      exit_pct: 0.50  # Exit 50% at 1.5R
+    - ratio: 3.0
+      exit_pct: 0.50  # Exit remaining at 3R
+
+# Circuit Breakers
+circuit_breakers:
+  # Stop all trading conditions
+  enabled: true
+  
+  # VIX above this = stop trading
+  vix_threshold: 40
+  
+  # Daily loss limit hit = stop for day
+  daily_loss_stop: true
+  
+  # Max drawdown hit = stop until review
+  drawdown_stop: true

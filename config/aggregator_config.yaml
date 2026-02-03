@@ -1,0 +1,40 @@
+# Signal Aggregator Configuration
+# Controls how signals from multiple strategy pods are combined
+
+# Ensemble weights for each strategy pod
+# Higher weight = more influence on final recommendation
+ensemble_weights:
+  fx_carry_momentum: 0.30      # Primary FX strategy
+  btc_trend_vol: 0.20          # BTC trend + volatility
+  commodities_ts: 0.25         # Commodities term structure
+  cross_asset_risk: 0.15       # Cross-asset risk signals
+  mean_reversion: 0.10         # Mean reversion plays
+
+# Minimum confidence to include in output
+min_confidence: 0.30
+
+# Boost confidence when multiple pods agree
+boost_aligned_signals: true
+alignment_boost: 0.15  # Boost per additional agreeing pod
+
+# Maximum recommendations per run
+max_recommendations: 10
+
+# Conflict resolution settings
+conflict_resolution:
+  confidence_threshold: 0.30
+  allow_conflicted_output: true
+  use_regime_tiebreaker: true
+  max_signals_per_instrument: 1
+
+# Deduplication settings
+deduplication:
+  time_window_hours: 24
+  update_if_stronger: true
+  strength_threshold: 0.10
+
+# Output settings
+output:
+  include_factors: true
+  include_pod_names: true
+  max_rationale_length: 500

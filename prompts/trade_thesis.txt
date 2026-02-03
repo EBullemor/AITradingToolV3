@@ -1,0 +1,47 @@
+You are a senior portfolio manager drafting a trade recommendation memo.
+
+SIGNAL DATA:
+- Instrument: {instrument}
+- Direction: {direction}
+- Entry: {entry_price}
+- Stop Loss: {stop_loss}
+- Take Profit: {take_profit}
+- Confidence: {confidence}
+- Contributing Strategies: {strategies}
+
+QUANTITATIVE FACTORS:
+{quant_factors}
+
+NEWS CONTEXT:
+{news_summary}
+
+TASK:
+Write a concise trade thesis explaining why this trade makes sense. Structure your response as follows:
+
+## Trade Summary
+One sentence: "[DIRECTION] [INSTRUMENT] at [ENTRY] targeting [TP], stop at [SL]"
+
+## Thesis
+2-3 paragraphs covering:
+1. **Macro Context**: What's driving this trade at the macro level?
+2. **Technical Setup**: How do the quantitative signals align?
+3. **Catalyst**: What will move price in our direction?
+
+## Key Risks
+- Risk 1: [What could go wrong]
+- Risk 2: [What could go wrong]
+
+## Monitoring Plan
+- Daily: [What to watch]
+- Weekly: [What to reassess]
+- Exit triggers: [When to cut regardless of price]
+
+RULES:
+- Cite sources [SOURCE_ID] for all factual claims
+- Be specific about numbers (rates, levels, percentages)
+- Acknowledge uncertainty where it exists
+- Keep total length under 400 words
+- Do NOT fabricate data or events
+
+OUTPUT:
+Write the thesis now, following the structure above.

@@ -1,0 +1,80 @@
+# ===========================================
+# Instruments Configuration
+# ===========================================
+# Defines all tradeable instruments and their properties
+
+fx:
+  # Major pairs - high liquidity, tight spreads
+  majors:
+    EURUSD:
+      name: "Euro / US Dollar"
+      bloomberg_ticker: "EURUSD Curncy"
+      pip_value: 0.0001
+      typical_spread_pips: 0.5
+      trading_hours: "24h"  # Sunday 5pm ET - Friday 5pm ET
+      
+    USDJPY:
+      name: "US Dollar / Japanese Yen"
+      bloomberg_ticker: "USDJPY Curncy"
+      pip_value: 0.01
+      typical_spread_pips: 0.5
+      trading_hours: "24h"
+      
+    GBPUSD:
+      name: "British Pound / US Dollar"
+      bloomberg_ticker: "GBPUSD Curncy"
+      pip_value: 0.0001
+      typical_spread_pips: 0.8
+      trading_hours: "24h"
+      
+    AUDUSD:
+      name: "Australian Dollar / US Dollar"
+      bloomberg_ticker: "AUDUSD Curncy"
+      pip_value: 0.0001
+      typical_spread_pips: 0.6
+      trading_hours: "24h"
+
+crypto:
+  BTCUSD:
+    name: "Bitcoin / US Dollar"
+    data_sources:
+      - coinbase
+      - binance
+    min_trade_size: 0.001
+    typical_spread_pct: 0.05
+    trading_hours: "24/7"
+
+commodities:
+  CL:
+    name: "WTI Crude Oil"
+    bloomberg_ticker: "CL1 Comdty"
+    contract_size: 1000  # barrels
+    tick_size: 0.01
+    tick_value: 10.00
+    trading_hours: "06:00-17:00 ET"
+    
+  GC:
+    name: "Gold"
+    bloomberg_ticker: "GC1 Comdty"
+    contract_size: 100  # troy ounces
+    tick_size: 0.10
+    tick_value: 10.00
+    trading_hours: "06:00-17:00 ET"
+    
+  HG:
+    name: "Copper"
+    bloomberg_ticker: "HG1 Comdty"
+    contract_size: 25000  # pounds
+    tick_size: 0.0005
+    tick_value: 12.50
+    trading_hours: "06:00-17:00 ET"
+
+# Macro indicators (not tradeable, used for regime detection)
+macro:
+  VIX:
+    name: "CBOE Volatility Index"
+    bloomberg_ticker: "VIX Index"
+    
+  DXY:
+    name: "US Dollar Index"
+    bloomberg_ticker: "DXY Curncy"

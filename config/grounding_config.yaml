@@ -1,0 +1,50 @@
+# Grounding Configuration
+# Settings for LLM output verification
+
+grounding:
+  # Minimum confidence for a claim to be considered grounded
+  min_claim_confidence: 0.70
+  
+  # Minimum percentage of claims that must be grounded
+  min_overall_score: 0.85
+  
+  # Score below which human review is required
+  human_review_threshold: 0.70
+  
+  # Semantic similarity model (for production use)
+  # semantic_model: "all-MiniLM-L6-v2"
+
+claim_extraction:
+  # Minimum characters for a valid claim
+  min_claim_length: 10
+  
+  # Include context sentences
+  context_sentences: 1
+  
+  # Claim types to extract
+  extract_types:
+    - price
+    - event
+    - attribution
+    - causal
+    - numerical
+
+source_matching:
+  # Maximum age of source documents
+  max_source_age_hours: 48
+  
+  # Number of top matches to consider
+  top_k_sources: 3
+  
+  # Minimum similarity threshold
+  similarity_threshold: 0.50
+
+reporting:
+  # Flag ungrounded claims in output
+  flag_ungrounded: true
+  
+  # Include source excerpts in report
+  include_excerpts: true
+  
+  # Maximum excerpt length
+  excerpt_length: 200

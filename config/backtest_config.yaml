@@ -1,0 +1,92 @@
+# Backtest Configuration
+# Settings for walk-forward validation and performance evaluation
+
+backtest:
+  # Validation Method
+  validation_method: walk_forward  # or train_test_split
+  
+  # Date Range
+  start_date: "2023-01-01"
+  end_date: "2025-12-31"
+  
+  # Initial Capital
+  initial_capital: 100000
+  
+  # Walk-Forward Settings
+  walk_forward:
+    enabled: true
+    train_window_days: 252   # 1 year training
+    test_window_days: 63     # 3 months testing
+    step_days: 21            # Roll forward monthly
+    min_train_samples: 50    # Minimum trades in training
+    
+  # Position Sizing
+  position_sizing:
+    method: fixed_risk
+    risk_per_trade_pct: 0.01  # 1% risk per trade
+    max_position_pct: 0.10    # Max 10% per position
+    
+  # Fill Assumptions
+  fill_assumption: next_open  # close, next_open, vwap
+  
+  # Data Handling
+  data:
+    price_field: PX_LAST
+    handle_missing: forward_fill
+
+# Transaction Costs (realistic per asset class)
+transaction_costs:
+  fx_majors:
+    spread_bps: 1.0
+    slippage_bps: 0.5
+    commission_pct: 0.0
+    
+  fx_em:
+    spread_bps: 5.0
+    slippage_bps: 2.0
+    commission_pct: 0.0
+    
+  commodities:
+    spread_bps: 3.0
+    slippage_bps: 2.0
+    commission_per_contract: 2.50
+    
+  crypto:
+    spread_bps: 5.0
+    slippage_bps: 5.0
+    commission_pct: 0.10
+
+# Regime Analysis
+regime_analysis:
+  enabled: true
+  regimes:
+    - name: low_vol
+      vix_percentile_max: 0.30
+    - name: normal_vol
+      vix_percentile_min: 0.30
+      vix_percentile_max: 0.70
+    - name: high_vol
+      vix_percentile_min: 0.70
+
+# Metrics Configuration
+metrics:
+  primary:
+    - sharpe_ratio
+    - max_drawdown
+    - cagr
+  secondary:
+    - sortino_ratio
+    - win_rate
+    - profit_factor
+    - avg_trade
+    - max_consecutive_losses
+  per_regime: true
+  bootstrap_ci: true
+  bootstrap_samples: 1000
+
+# Reporting
+reporting:
+  output_dir: reports/backtest
+  generate_plots: true
+  export_trades: true
+  confidence_intervals: true

@@ -1,0 +1,145 @@
+# ===========================================
+# Data Quality Rules
+# ===========================================
+# Validation thresholds and rules for the data pipeline
+
+# ----- Global Validation Settings -----
+global:
+  missing_value_threshold: 0.01    # Max 1% missing values allowed
+  stale_data_hours: 24             # Data older than 24h is stale
+  quarantine_on_failure: true      # Move bad data to quarantine/
+  halt_on_critical_failure: true   # Stop pipeline if critical check fails
+
+# ----- Completeness Checks -----
+completeness:
+  required_instruments:
+    fx:
+      - EURUSD
+      - USDJPY
+      - GBPUSD
+      - AUDUSD
+    commodities:
+      - CL1
+      - GC1
+      - HG1
+    macro:
+      - VIX
+      - DXY
+      
+  required_fields:
+    - PX_LAST      # Always required
+    - PX_HIGH      # For ATR
+    - PX_LOW       # For ATR
+    
+  min_rows_per_instrument: 252  # At least 1 year of history
+
+# ----- Freshness Checks -----
+freshness:
+  # Data should be from the expected date
+  max_age_hours:
+    fx: 24           # FX data should be < 24h old
+    commodities: 24
+    macro: 24
+    
+  # Handle weekends/holidays
+  skip_weekends: true
+  skip_holidays: true  # Uses config/holidays.yaml
+  
+  # What constitutes "stale" during market hours
+  market_hours_staleness_minutes: 60
+
+# ----- Outlier Detection -----
+outliers:
+  # Flag but don't auto-remove outliers
+  auto_remove: false
+  
+  # Price change thresholds
+  max_daily_return_std: 5.0        # Flag if daily return > 5 std devs
+  max_price_change_pct: 10.0       # Flag if price changes > 10% in a day
+  
+  # Absolute bounds (sanity checks)
+  bounds:
+    EURUSD:
+      min: 0.8
+      max: 1.5
+    USDJPY:
+      min: 80
+      max: 200
+    VIX:
+      min: 5
+      max: 100
+    CL1:
+      min: 10
+      max: 200
+      
+  # Negative price check
+  allow_negative_prices:
+    - interest_rates  # Rates can be negative
+    # Most prices cannot be negative
+
+# ----- Bias Prevention -----
+bias_prevention:
+  # Ensure no forward-looking data
+  check_timestamps: true
+  max_future_timestamp_tolerance_seconds: 60  # Allow 1 min clock drift
+  
+  # Settlement vs real-time
+  use_settlement_prices:
+    commodities: true   # Use settlement for commodities
+    fx: false           # Use real-time for FX
+    
+  # Announcement dates
+  check_announcement_dates: true  # Ensure economic data uses announcement date, not revision date
+
+# ----- Instrument-Specific Rules -----
+instrument_rules:
+  fx_majors:
+    trading_hours: "00:00-23:59"  # 24hr
+    weekend_data: false           # No data expected Sat-Sun
+    holiday_calendar: "US"
+    
+  commodities:
+    trading_hours: "06:00-17:00"  # ET
+    settlement_time: "14:30"      # ET
+    weekend_data: false
+    holiday_calendar: "CME"
+    
+  btc:
+    trading_hours: "00:00-23:59"  # 24/7
+    weekend_data: true            # BTC trades weekends
+    holiday_calendar: null        # No holidays
+
+# ----- Validation Actions -----
+actions:
+  on_missing_instrument:
+    severity: "error"
+    action: "quarantine_file"
+    alert: true
+    
+  on_stale_data:
+    severity: "warning"
+    action: "flag_for_review"
+    alert: true
+    
+  on_outlier_detected:
+    severity: "warning"
+    action: "flag_for_review"
+    alert: false  # Don't alert on every outlier
+    
+  on_forward_looking_bias:
+    severity: "critical"
+    action: "quarantine_file"
+    alert: true
+    halt_pipeline: true  # This is serious - stop everything
+
+# ----- Validation Report -----
+reporting:
+  generate_report: true
+  report_path: "reports/health/data_validation_{date}.json"
+  
+  include_in_report:
+    - summary_stats
+    - missing_value_counts
+    - outlier_list
+    - freshness_status
+    - validation_pass_rate
